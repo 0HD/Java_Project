@@ -35,6 +35,12 @@ class Admin extends User {
         }
     }
 
+    public static void viewAllUsers() {
+        Output.viewUsers(Main.registeredUsers, 0, Main.registeredUsers.size(), 0);
+        Output.print("Enter anything to go back.");
+        Main.userInput();
+    }
+
     private List<User> getUsers() {
         List<User> users = new ArrayList<>();
         users.add(new User("user1", "password1"));

@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Output {
@@ -42,6 +43,24 @@ public class Output {
             }
         }
         System.out.print("|\n");
+    }
+
+    public static void resetColor () {
+        System.out.print("\u001B[0m");
+        clear();
+    }
+
+    public static void print(String output) {
+        System.out.print(output);
+    }
+
+    public static void clear() {
+        print("\n\n==================================================\n\n");
+        // from StackOverflow
+        try {
+            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+        } catch (IOException | InterruptedException ignored) {}
+        //
     }
 
     private static String underscores (int amount) {
