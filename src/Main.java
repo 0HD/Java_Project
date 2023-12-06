@@ -144,7 +144,7 @@ public class Main
                     }
                 }
                 else if (in == '2' && registeredUsers.isEmpty())
-                    loadDemoDatabase();
+                    Demo.loadDemoDatabase();
                 else if (in == '2' && !registeredUsers.isEmpty())
                     if (signup(false) == -1) {
                         invalidUser = true;
@@ -311,13 +311,6 @@ public class Main
             }
             return -1;
         }
-    }
-
-    public static void loadDemoDatabase() {
-        registeredUsers.add(new Admin("real_admin", "admin12345"));
-        registeredUsers.add(new Seller("janed", "iamjane555"));
-        registeredUsers.add(new Buyer("mohammadali_", "theboxer0_"));
-        Output.viewUsers(registeredUsers, 0, registeredUsers.size(), 0);
     }
 
 
