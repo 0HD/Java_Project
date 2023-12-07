@@ -7,25 +7,33 @@ class Buyer extends User {
     private ArrayList<Property> propertiesOwned = new ArrayList<>();
 
     public Buyer(String username, String password) {
-        super(username,password);
+        super(username, password);
         numberOfBuyers++;
     }
 
     public void listAllProperties() {
-        Output.viewTable(Main.listedProperties, 0, Main.listedProperties.size(), 0);
+        if (!Main.listedProperties.isEmpty())
+            Output.viewTable(Main.listedProperties, 0, Main.listedProperties.size(), 0);
+        else
+            System.out.println("No properties listed.");
     }
 
-    public Property[] searchProperties(String name) {
+    public void listMyProperties() {
+        if (!propertiesOwned.isEmpty())
+            Output.viewTable(propertiesOwned, 0, propertiesOwned.size(), 0);
+        else
+            System.out.println("No properties owned.");
+    }
 
-        Property[] filteredProperties = new Property[0];
-        for (Property property : propertiesOwned) {
-            if (property.getName().contains(name)) {
-                filteredProperties = Arrays.copyOf(filteredProperties, filteredProperties.length + 1);
-                filteredProperties[filteredProperties.length - 1] = property;
+    public void purchaseProperty(int ownerId, Property property) {
+        for (Property prop : Main.listedProperties) {
+            if (prop.equals(property)) {
+                ((Seller) Main.registeredUsers.get(ownerId)).removeProperty(property);
+                propertiesOwned.add(property);
             }
         }
-        return filteredProperties;
     }
+
 
     public Property searchProperties(double minValue, double maxValue) {
 
@@ -38,11 +46,4 @@ class Buyer extends User {
         }
         return property;
     }
-
-//    public void buyProperty(int id, double price) {
-//
-//        Property property = new Property(id, "", price);
-//        propertiesOwned = Arrays.copyOf(propertiesOwned, propertiesOwned.length + 1);
-//        propertiesOwned[propertiesOwned.length - 1] = property;
-//    }
 }

@@ -42,12 +42,12 @@ public class Main
             }
             else if (user.getClass() == Seller.class) {
                 Output.print("a" + "\u001B[32m seller\u001B[30m.\n");
-                options = new String[]{"My Listings", "List a Property", "Buy Requests"};
-                lastOption = 3;
+                options = new String[]{"View Owned Properties", "List New Property",};
+                lastOption = 2;
             }
             else if (user.getClass() == Buyer.class) {
                 Output.print("a" + "\u001B[34m buyer\u001B[30m.\n");
-                options = new String[]{"View Listings", "Owned Properties", "Sent Requests"};
+                options = new String[]{"View Listings", "View Owned Properties", "Buy Property"};
                 lastOption = 3;
             }
 
@@ -78,25 +78,240 @@ public class Main
             if (user instanceof Admin)
                 switch (a.charAt(0)) {
                     case '1': Admin.viewAllUsers(); break;
-                    case '2': break;
-                    case '3': break;
-                    case '4': break;
-                    case '5': break;
+                    case '2': findUser(); break;
+                    case '3': editUser(); break;
+                    case '4': signup(false); break;
+                    case '5': deleteUser(); break;
                 }
             else if (user instanceof Seller)
                 switch (a.charAt(0)) {
                     case '1': ((Seller) user).viewMyListings(); break;
-                    case '2': break;
-                    case '3': break;
+                    case '2': printNewListingMenu((Seller) user); break;
                 }
             else if (user instanceof Buyer)
                 switch (a.charAt(0)) {
                     case '1': ((Buyer) user).listAllProperties(); break;
-                    case '2': break;
-                    case '3': break;
+                    case '2': ((Buyer) user).listMyProperties(); break;
+                    case '3': printBuyMenu((Buyer) user); break;
                 }
         }
     }
+
+    public static void printBuyMenu (Buyer buyer) {
+        boolean invalidInput = false;
+        do {
+            System.out.println("Which property would you like to buy?");
+
+            String input = userInput();
+            invalidInput = false;
+
+            if (input.isEmpty()) continue;
+
+            for (char c : input.toCharArray()) {
+                if (!Character.isDigit(c)) {
+                    invalidInput = true;
+                }
+            }
+
+            for (Property property : listedProperties) {
+                if (property.getPropertyId() == Integer.valueOf(input))
+                    buyer.purchaseProperty(property.getOwner(), property);
+            }
+        } while (invalidInput);
+
+
+    }
+
+    public static int deleteUser () {
+        System.out.println("Enter the ID of the user to find:");
+        String input = userInput();
+
+        User foundUser = new Admin("", "");
+        boolean found = false;
+        for (User user : registeredUsers) {
+            if (user.getId() == Integer.valueOf(input)) {
+                foundUser = user;
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            System.out.println("No user found.");
+            return -1;
+        }
+
+        int id = foundUser.getId();
+        registeredUsers.remove(foundUser);
+
+        for (int i = id; i < registeredUsers.size(); i++) {
+            registeredUsers.get(i).setUserId(registeredUsers.get(i).getId() - 1);
+        }
+
+        return 0;
+    }
+
+    public static void printNewListingMenu (Seller seller) {
+        boolean invalidInput = false;
+        String propertyName = "", value = "", address = "";
+        do {
+            System.out.println("What's the name of the property?");
+
+            String input = userInput();
+            invalidInput = false;
+
+            if (input.isEmpty()) continue;
+
+            for (char c : input.toCharArray()) {
+                if (!Character.isLetter(c)) {
+                    invalidInput = true;
+                }
+            }
+
+            if (!invalidInput)
+                propertyName = input;
+        } while (invalidInput);
+
+        do {
+            System.out.println("What's the address of the property?");
+
+            String input = userInput();
+            invalidInput = false;
+
+            if (input.isEmpty()) continue;
+
+            for (char c : input.toCharArray()) {
+                if (!Character.isLetter(c)) {
+                    invalidInput = true;
+                }
+            }
+
+            if (!invalidInput)
+                address = input;
+        } while (invalidInput);
+
+        do {
+            System.out.println("What's the value of the property? (Numbers only)");
+
+            String input = userInput();
+            invalidInput = false;
+
+            if (input.isEmpty()) continue;
+
+            for (char c : input.toCharArray()) {
+                if (!Character.isDigit(c)) {
+                    invalidInput = true;
+                }
+            }
+
+            if (!invalidInput)
+                value = input;
+        } while (invalidInput);
+        double dblValue = Double.valueOf(value);
+
+        Property property = new Property(seller.getId(), propertyName, dblValue);
+        property.setAddress(address);
+        property.setTax(0.15);
+        Main.listedProperties.add(property);
+        seller.addProperty(property);
+    }
+
+    public static int findUser() {
+        System.out.println("Enter the username of the user to find:");
+        String input = userInput();
+
+        User foundUser = new Admin("", "");
+        boolean found = false;
+        for (User user : registeredUsers) {
+            if (user.getUsername().equals(input)) {
+                foundUser = user;
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            System.out.println("No user found.");
+            return -1;
+        }
+
+        ArrayList<User> singleArray = new ArrayList<>();
+        singleArray.add(foundUser);
+
+        Output.viewTable(singleArray, 0, 1, 0);
+
+        return 0;
+    }
+    public static int editUser() {
+        System.out.println("Enter the ID of the user to find:");
+        String input = userInput();
+
+        User foundUser = new Admin("", "");
+        boolean found = false;
+        for (User user : registeredUsers) {
+            if (user.getId() == Integer.valueOf(input)) {
+                foundUser = user;
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            System.out.println("No user found.");
+            return -1;
+        }
+
+        ArrayList<User> singleArray = new ArrayList<>();
+        singleArray.add(foundUser);
+
+        Output.viewTable(singleArray, 0, 1, 0);
+        System.out.println("What would you like to do with this account?");
+
+        String []options = new String[]{"Change full name", "Change username", "Change password"};
+        Integer lastOption = 3;
+        int index = 0;
+
+        for (String option : options) {
+            Output.print("[" + (++index) + "] " + option + "\n");
+        }
+
+        Output.print("[0] Back\n\n");
+
+        Output.print(".-- Please enter a number:\n");
+        Output.print("'->");
+        String a = userInput();
+
+        a = a.trim();
+
+        if (a.length() == 1 && Character.isDigit(a.charAt(0))) {
+            if (a.charAt(0) == '0')
+                return 0;
+            else if (a.charAt(0) > lastOption.toString().charAt(0))
+                return -1;
+        }
+        else
+            return -1;
+
+        switch (a.charAt(0)) {
+            case '1': {
+                System.out.println("Enter the new full name:");
+                foundUser.setFullName(userInput());
+                break;
+            }
+            case '2': {
+                System.out.println("Enter the new username:");
+                foundUser.setUsername(userInput());
+                break;
+            }
+            case '3': {
+                System.out.println("Enter the new password:");
+                foundUser.setPassword(userInput());
+                break;
+            }
+        }
+        return 0;
+    }
+
 
     public static void welcome() {
         boolean invalidInput = false;

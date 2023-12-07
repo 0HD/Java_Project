@@ -10,22 +10,18 @@ class Seller extends User {
         numberOfSeller++;
     }
 
+
+
     public void addProperty(Property property) {
         propertiesOwned.add(property);
     }
-//
-//    public void sellProperty(int id, int buyerId) {
-//        for (Property property : propertiesOwned) {
-//            if (property.getPropertyId() == id) {
-//                property.setOwner(buyerId);
-//                break;
-//            }
-//        }
-//    }
 
+    public void removeProperty(Property property) { propertiesOwned.remove(property); }
     public void viewMyListings() {
         if (!propertiesOwned.isEmpty())
             Output.viewTable(propertiesOwned, 0, propertiesOwned.size(), 0);
+        else
+            System.out.println("No properties owned.");
     }
 
 //    public Property[] getPropertiesOwned() {

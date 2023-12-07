@@ -1,5 +1,5 @@
 abstract class User {
-    private final int userId;
+    private int userId;
     private String fullName;
     private String username;
     private String password;
@@ -34,6 +34,10 @@ abstract class User {
 
     public String getPassword() {
         return password;
+    }
+
+    protected void setUserId (int userId) {
+        this.userId = userId;
     }
 
     int getId() {

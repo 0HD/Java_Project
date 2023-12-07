@@ -23,6 +23,7 @@ class Property {
         this.ownerId = ownerId;
         this.name = name;
         this.value = value;
+        this.propertyId = numberOfProperties;
         numberOfProperties++;
         if (this.getClass() == Residential.class)
             this.type = PropertyType.RESIDENTIAL;

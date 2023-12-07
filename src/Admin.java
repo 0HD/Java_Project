@@ -41,11 +41,4 @@ class Admin extends User {
         Main.userInput();
     }
 
-//    private List<User> getUsers() {
-//        List<User> users = new ArrayList<>();
-//        users.add(new User("user1", "password1"));
-//        users.add(new User("user2", "password2"));
-//        users.add(new User("user3", "password3"));
-//        return users;
-//    }
 }
