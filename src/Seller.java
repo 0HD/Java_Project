@@ -1,30 +1,34 @@
+import java.util.ArrayList;
+
 class Seller extends User {
     private int numberOfSeller;
-    private Property[] propertiesOwned;
+    private ArrayList<Property> propertiesOwned = new ArrayList<>();
 
     public Seller(String username, String password) {
         super(username, password);
-        propertiesOwned = new Property[0];
+//        propertiesOwned = new Property[0];
         numberOfSeller++;
     }
 
     public void addProperty(Property property) {
-        Property[] newPropertiesOwned = new Property[propertiesOwned.length + 1];
-        System.arraycopy(propertiesOwned, 0, newPropertiesOwned, 0, propertiesOwned.length);
-        newPropertiesOwned[propertiesOwned.length] = property;
-        propertiesOwned = newPropertiesOwned;
+        propertiesOwned.add(property);
+    }
+//
+//    public void sellProperty(int id, int buyerId) {
+//        for (Property property : propertiesOwned) {
+//            if (property.getPropertyId() == id) {
+//                property.setOwner(buyerId);
+//                break;
+//            }
+//        }
+//    }
+
+    public void viewMyListings() {
+        if (!propertiesOwned.isEmpty())
+            Output.viewTable(propertiesOwned, 0, propertiesOwned.size(), 0);
     }
 
-    public void sellProperty(int id, int buyerId) {
-        for (Property property : propertiesOwned) {
-            if (property.getPropertyId() == id) {
-                property.setOwner(buyerId);
-                break;
-            }
-        }
-    }
-
-    public Property[] getPropertiesOwned() {
-        return propertiesOwned;
-    }
+//    public Property[] getPropertiesOwned() {
+//        return propertiesOwned;
+//    }
 }

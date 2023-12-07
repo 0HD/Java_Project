@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,6 +9,7 @@ public class Main
 {
 
     static ArrayList<User> registeredUsers = new ArrayList<>();
+    static ArrayList<Property> listedProperties = new ArrayList<>();
 
     private static boolean isExit = false;
 
@@ -73,7 +75,7 @@ public class Main
             }
             else continue;
 
-            if (user.getClass() == Admin.class)
+            if (user instanceof Admin)
                 switch (a.charAt(0)) {
                     case '1': Admin.viewAllUsers(); break;
                     case '2': break;
@@ -81,15 +83,15 @@ public class Main
                     case '4': break;
                     case '5': break;
                 }
-            else if (user.getClass() == Seller.class)
+            else if (user instanceof Seller)
                 switch (a.charAt(0)) {
-                    case '1': break;
+                    case '1': ((Seller) user).viewMyListings(); break;
                     case '2': break;
                     case '3': break;
                 }
-            else if (user.getClass() == Buyer.class)
+            else if (user instanceof Buyer)
                 switch (a.charAt(0)) {
-                    case '1': break;
+                    case '1': ((Buyer) user).listAllProperties(); break;
                     case '2': break;
                     case '3': break;
                 }
@@ -106,7 +108,7 @@ public class Main
             if (invalidUser)
                 System.out.print("Invalid username and/or password. Please try again.\n\n");
 
-            if (registeredUsers.size() == 0){
+            if (registeredUsers.isEmpty()){
                 System.out.print("Welcome to the Real Estate Management System.\n" +
                                  "The database is currently empty.\n" +
                                  "Would you like to proceed, or load a demo database?\n");

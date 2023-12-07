@@ -11,34 +11,6 @@ class Commercial extends Property {
         super(ownerId, name, value);
     }
 
-    public String getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public double getValue() {
-        return value;
-    }
-
-    @Override
-    public void setValue(double value) {
-        this.value = value;
-    }
-
     public String getNearbyIndustrial() {
         return nearbyIndustrial;
     }

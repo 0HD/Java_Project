@@ -67,35 +67,35 @@ class Property {
     }
 
     public int getOwner() {
-        return ownerId;
+        return this.ownerId;
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public PropertyType getType() {
-        return type;
+        return this.type;
     }
 
     public String getAddress() {
-        return address;
+        return this.address;
     }
 
     public String getFeatures() {
-        return features;
+        return this.features;
     }
 
     public double getValue() {
-        return value;
+        return this.value;
     }
 
     public double getDiscount() {
-        return discount;
+        return this.discount;
     }
 
     public double getInterest() {
-        return interest;
+        return this.interest;
     }
 
     public double getTax() {
@@ -108,7 +108,9 @@ class Property {
     }
 
     int getPropertyId() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return this.propertyId;
     }
+
+
 
 }

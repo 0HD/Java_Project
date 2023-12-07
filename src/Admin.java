@@ -24,28 +24,28 @@ class Admin extends User {
         super.setUsername(username);
     }
 
-    public void deleteUser(int id) {
-        List<User> users = getUsers();
-        for (int i = 0; i < users.size(); i++) {
-            User currentUser = users.get(i);
-            if (currentUser.getId() == id) {
-                users.remove(i);
-                break;
-            }
-        }
-    }
+//    public void deleteUser(int id) {
+//        List<User> users = getUsers();
+//        for (int i = 0; i < users.size(); i++) {
+//            User currentUser = users.get(i);
+//            if (currentUser.getId() == id) {
+//                users.remove(i);
+//                break;
+//            }
+//        }
+//    }
 
     public static void viewAllUsers() {
-        Output.viewUsers(Main.registeredUsers, 0, Main.registeredUsers.size(), 0);
+        Output.viewTable(Main.registeredUsers, 1, Main.registeredUsers.size(), 3);
         Output.print("Enter anything to go back.");
         Main.userInput();
     }
 
-    private List<User> getUsers() {
-        List<User> users = new ArrayList<>();
-        users.add(new User("user1", "password1"));
-        users.add(new User("user2", "password2"));
-        users.add(new User("user3", "password3"));
-        return users;
-    }
+//    private List<User> getUsers() {
+//        List<User> users = new ArrayList<>();
+//        users.add(new User("user1", "password1"));
+//        users.add(new User("user2", "password2"));
+//        users.add(new User("user3", "password3"));
+//        return users;
+//    }
 }
