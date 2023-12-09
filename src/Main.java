@@ -327,10 +327,13 @@ public class Main
                 System.out.print("Welcome to the Real Estate Management System.\n" +
                                  "The database is currently empty.\n" +
                                  "Would you like to proceed, or load a demo database?\n");
-                System.out.print("[1] Continue\n" +
-                                 "[2] Load demo\n" +
-                                 "[0] Exit system\n");
+//                System.out.print("[1] Continue\n" +
+//                                 "[2] Load demo\n" +
+//                                 "[0] Exit system\n");
+                String []menuOptions = {"Exit system", "Continue", "Load demo"};
+                Output.printOptions(menuOptions);
             }
+
             else {
                 System.out.print("Welcome to the Real Estate Management System.\n" +
                                  "If you have an existing account, please select [1].\n");

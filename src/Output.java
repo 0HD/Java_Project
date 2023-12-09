@@ -14,8 +14,9 @@ public class Output {
     }
 
     private static String fillSpaces (String str, int max) {
-
-        while (str.length() < max)
+        if (str.length() > max)
+            return str.substring(0, max - 3) + "...";
+        else while (str.length() < max)
             str += " ";
 
         return str + " ";
@@ -188,5 +189,18 @@ public class Output {
 
     private static String highlightColumn (String column) {
         return ">" + column + "<";
+    }
+
+    public static void printOptions (String[] options) {
+        print("  _________________________________________________\n");
+        print(" |                                                 |\n");
+        int counter = 0;
+        for (String option : options) {
+            if (counter == 0) { counter++; continue; }
+            print(" |      [" + (counter++) + "] " + fillSpaces(option, 38) + "|\n");
+        }
+        print(" |   -------------------------------------------   |\n");
+        print(" |      [0] " + fillSpaces(options[0], 38) + "|\n");
+        print(" |_________________________________________________|\n");
     }
 }
