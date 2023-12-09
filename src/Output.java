@@ -15,7 +15,7 @@ public class Output {
 
     private static String fillSpaces (String str, int max) {
         if (str.length() > max)
-            return str.substring(0, max - 3) + "...";
+            return str.substring(0, max - 2) + "...";
         else while (str.length() < max)
             str += " ";
 
@@ -197,10 +197,50 @@ public class Output {
         int counter = 0;
         for (String option : options) {
             if (counter == 0) { counter++; continue; }
-            print(" |      [" + (counter++) + "] " + fillSpaces(option, 38) + "|\n");
+            print(" |      [" + (counter++) + "] " + fillSpaces(option, 35) + "   |\n");
         }
         print(" |   -------------------------------------------   |\n");
-        print(" |      [0] " + fillSpaces(options[0], 38) + "|\n");
+        print(" |      [0] " + fillSpaces(options[0], 35) + "   |\n");
+        print(" |_________________________________________________|\n");
+    }
+
+    public static void printMessage (String message) {
+        int length = message.length();
+        int start = 0;
+
+        print("  _________________________________________________\n");
+        print(" |                                                 |\n");
+//        print(" |   " + fillSpaces(message, 49) + "   |\n");
+
+        while (message.length() - start > 0) {
+            if ((start + 42) >= message.length()) {
+                print(" |   " + fillSpaces(message.substring(start), 42) + "   |\n");
+                break;
+            }
+            else if (Character.isLetter(message.charAt(start + 41)) && Character.isLetter(message.charAt(start + 42))) {
+                print(" |   " + message.substring(start, start + 42) + "-   |\n");
+                length -= 42; start += 42;
+            }
+            else if (Character.isLetter(message.charAt(start + 42))) {
+                print(" |   " + message.substring(start, start + 41) + "     |\n");
+                length -= 41; start += 42;
+            }
+            else {
+                print(" |   " + message.substring(start, start + 43) + "   |\n");
+                length -= 43; start += 43;
+            }
+        }
+
+        print(" |_________________________________________________|\n");
+    }
+
+    public static void printMessageML (String[] lines) {
+        print("  _________________________________________________\n");
+        print(" |                                                 |\n");
+        int counter = 0;
+        for (String line : lines) {
+            print(" |   " + fillSpaces(line, 42) + "   |\n");
+        }
         print(" |_________________________________________________|\n");
     }
 }
