@@ -96,13 +96,13 @@ public class Main
                 switch (a.charAt(0)) {
                     case '1': Admin.viewAllUsers(); break;
                     case '2': {
-                        if (findUser() == -1) {
+                        if (Admin.findUser() == -1) {
                             code = Status.USER_NOT_FOUND;
                         }
                         break;
                     }
                     case '3': {
-                        if (deleteUser() == -1) {
+                        if (Admin.deleteUser() == -1) {
                             code = Status.USER_NOT_FOUND;
                         }
                         break;
@@ -125,7 +125,9 @@ public class Main
     public static void printBuyMenu (Buyer buyer) {
         boolean invalidInput = false;
         do {
-            System.out.println("Which property would you like to buy?");
+            Output.clear();
+            Output.printMessage("Purchasing a listed property.");
+            Output.printInputMessage("Enter the ID of the property to purchase.");
 
             String input = userInput();
             invalidInput = false;
@@ -143,88 +145,20 @@ public class Main
                     buyer.purchaseProperty(property.getOwner(), property);
             }
         } while (invalidInput);
-
-
-    }
-
-    public static int deleteUser () {
-        Output.clear();
-        Output.printMessage("Finding a user account by username.");
-        Output.printInputMessage("Enter the username of the user.");
-        String input = userInput();
-
-        User foundUser = new Admin("", "");
-        boolean found = false;
-        for (User user : registeredUsers) {
-            if (user.getUsername().equals(input)) {
-                foundUser = user;
-                found = true;
-                break;
-            }
-        }
-
-        if (!found) {
-            System.out.println("No user found.");
-            return -1;
-        }
-        Status code = Status.OK;
-
-        while (true) {
-            Output.clear();
-            Output.printMessageML(new String[]{"Are you sure you want to delete this user?",
-                    "- Username: " + foundUser.getUsername()});
-            Output.printOptions(new String[]{"Back to main menu.", "Yes, I'm sure."});
-            if (code == Status.OK) Output.printInputMessage("Please enter a number.");
-            else Output.printInputMessage("Invalid option. Please enter 0 or 1.");
-            String a = userInput();
-
-            a = a.trim();
-
-            if (a.length() == 1 && Character.isDigit(a.charAt(0))) {
-                if (a.charAt(0) == '0')
-                    return 0;
-                else if (a.charAt(0) != '1') {
-                    code = Status.INVALID_LOGIN;
-                    continue;
-                }
-            }
-            else {
-                code = Status.INVALID_LOGIN;
-                continue;
-            }
-
-            break;
-        }
-
-        Output.clear();
-        Output.printMessage("Deleting user: \"" + foundUser.getUsername() + "\".");
-        Output.printInputMessage("Please enter \"" + foundUser.getUsername() + "\" to proceed.");
-        if (!userInput().equals(foundUser.getUsername())) {
-            Output.clear();
-            Output.printMessage("Account deletion cancelled. Enter to continue.");
-            userInput();
-            return 0;
-        }
-
-        int id = foundUser.getId();
-        registeredUsers.remove(foundUser);
-
-        for (int i = id; i < registeredUsers.size(); i++) {
-            registeredUsers.get(i).setUserId(registeredUsers.get(i).getId() - 1);
-        }
-
-        Output.clear();
-        Output.printMessage("The account was deleted. Enter to continue.");
+        Output.printMessage("You now own the property. Thank you!");
         userInput();
-        return 0;
+
     }
+
+
 
     public static void printNewListingMenu (Seller seller) {
         boolean invalidInput = false;
         String propertyName = "", value = "", address = "";
         do {
-            System.out.println("What's the name of the property?");
-
+            Output.clear();
+            Output.printMessage("Adding new property for sale.");
+            Output.printInputMessage("Enter the name of the property.");
             String input = userInput();
             invalidInput = false;
 
@@ -241,7 +175,9 @@ public class Main
         } while (invalidInput);
 
         do {
-            System.out.println("What's the address of the property?");
+            Output.clear();
+            Output.printMessage("New Property: " + propertyName);
+            Output.printInputMessage("Enter the address of the property.");
 
             String input = userInput();
             invalidInput = false;
@@ -259,7 +195,9 @@ public class Main
         } while (invalidInput);
 
         do {
-            System.out.println("What's the value of the property? (Numbers only)");
+            Output.clear();
+            Output.printMessage("New Property: " + propertyName);
+            Output.printInputMessage("Enter the value of the property in numbers only.");
 
             String input = userInput();
             invalidInput = false;
@@ -282,89 +220,14 @@ public class Main
         property.setTax(0.15);
         Main.listedProperties.add(property);
         seller.addProperty(property);
-    }
-
-    public static int findUser() {
         Output.clear();
-        Output.printMessage("Finding a user account by username.");
-        Output.printInputMessage("Enter the username of the user.");
-        String input = userInput();
-
-        User foundUser = new Admin("", "");
-        boolean found = false;
-        for (User user : registeredUsers) {
-            if (user.getUsername().equals(input)) {
-                foundUser = user;
-                found = true;
-                break;
-            }
-        }
-
-        if (!found) {
-            System.out.println("No user found.");
-            return -1;
-        }
-
-        if (editUser(foundUser) == 0)
-            return 0;
-        else
-            return -1;
+        Output.printMessage("Property has been listed for sale.");
+        userInput();
     }
 
-    public static int editUser(User user) {
-        while (true) {
-            Output.clear();
-            ArrayList<User> singleArray = new ArrayList<>();
-            singleArray.add(user);
 
-            Output.viewTable(singleArray, 0, 1, 0);
 
-            String []options = new String[]{"Back to main menu.", "Update the full name.",
-                    "Update the username.", "Update the password."};
-            Integer lastOption = 3;
-            int index = 0;
 
-            Output.printOptions(options);
-
-            Output.printInputMessage("Please enter a number.");
-            String a = userInput();
-
-            a = a.trim();
-
-            if (a.length() == 1 && Character.isDigit(a.charAt(0))) {
-                if (a.charAt(0) == '0')
-                    return 0;
-                else if (a.charAt(0) > lastOption.toString().charAt(0))
-                    return -1;
-            }
-            else
-                return -1;
-
-            switch (a.charAt(0)) {
-                case '1': {
-                    Output.clear();
-                    Output.viewTable(singleArray, 0, 1, 2);
-                    Output.printInputMessage("Enter the new full name.");
-                    user.setFullName(userInput());
-                    break;
-                }
-                case '2': {
-                    Output.clear();
-                    Output.viewTable(singleArray, 0, 1, 3);
-                    Output.printInputMessage("Enter the new username.");
-                    user.setUsername(userInput());
-                    break;
-                }
-                case '3': {
-                    Output.clear();
-                    Output.viewTable(singleArray, 0, 1, 4);
-                    Output.printInputMessage("Enter the new password.");
-                    user.setPassword(userInput());
-                    break;
-                }
-            }
-        }
-    }
     public static void welcome() {
         boolean invalidInput = false;
 
