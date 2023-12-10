@@ -13,6 +13,17 @@ public class Main
 
     private static boolean isExit = false;
 
+    enum Status {
+        OK,
+        NO_USERS,
+        USER_NOT_FOUND,
+        NO_PROPERTIES,
+        NO_OWNED_PROPERTIES,
+        SIGNUP_CANCELLED,
+        SIGNUP_SUCCESS,
+        INVALID_LOGIN
+    }
+
     public static void main(String[] args) {
         Output.print("\u001B[30m\u001B[107m");
         welcome();
@@ -25,44 +36,50 @@ public class Main
     }
 
     public static void printUserMenu(User user) {
+
+        Status code = Status.OK;
         while (true) {
             Output.clear();
 
+            if (code == Status.NO_USERS) Output.printError("There are no registered users yet.");
+            if (code == Status.USER_NOT_FOUND) Output.printError("That username does not exist.");
+            if (code == Status.NO_PROPERTIES) Output.printError("There are no properties listed yet.");
+            if (code == Status.NO_OWNED_PROPERTIES) Output.printError("You do not own any property yet.");
+            code = Status.OK;
+
             // welcome message
-            Output.print(" _ Welcome, \u001B[1m" + user.getFullName() + "\u001B[2m.\n");
-            Output.print("|  You are ");
+            String []message = {"Welcome, " + user.getFullName() + ".", ""};
+
+
+
+
 
             String []options = new String[0];
             Integer lastOption = 0;
 
             if (user.getClass() == Admin.class) {
-                Output.print("an" + "\u001B[31m admin\u001B[30m.\n");
-                options = new String[]{"View All Users", "Find User", "Edit User", "Add User", "Delete User"};
-                lastOption = 5;
+                message[1] = "You can \u001B[31mmanage, update, and delete users\u001B[30m.";
+                options = new String[]{"Log out from your account.", "Show list of all users.",
+                        "Update a user's information.", "Delete a user from the system."};
+                lastOption = 3;
             }
             else if (user.getClass() == Seller.class) {
-                Output.print("a" + "\u001B[32m seller\u001B[30m.\n");
-                options = new String[]{"View Owned Properties", "List New Property",};
+                message[1] = "You can \u001B[32mview and sell your own properties\u001B[30m.";
+                options = new String[]{"Log out from your account.", "Show list of all properties.",
+                        "List a new property for sale.",};
                 lastOption = 2;
             }
             else if (user.getClass() == Buyer.class) {
-                Output.print("a" + "\u001B[34m buyer\u001B[30m.\n");
-                options = new String[]{"View Listings", "View Owned Properties", "Buy Property"};
+                message[1] = "You can \u001B[34mview and purchase properties\u001B[30m.";
+                options = new String[]{"Log out from your account.", "Show list of all properties.",
+                        "View properties you own.", "Buy a new property."};
                 lastOption = 3;
             }
 
-            Output.print("|\n");
-            Output.print("'-> Main Menu\n");
+            Output.printMessageML(message, 52, 2);
+            Output.printOptions(options);
 
-            int index = 0;
-            for (String option : options) {
-                Output.print("[" + (++index) + "] " + option + "\n");
-            }
-
-            Output.print("[0] Log out\n\n");
-
-            Output.print(".-- Please enter a number:\n");
-            Output.print("'->");
+            Output.printInputMessage("Please enter a number.");
             String a = userInput();
 
             a = a.trim();
@@ -78,10 +95,20 @@ public class Main
             if (user instanceof Admin)
                 switch (a.charAt(0)) {
                     case '1': Admin.viewAllUsers(); break;
-                    case '2': findUser(); break;
+                    case '2': {
+                        if (findUser() == -1) {
+                            code = Status.USER_NOT_FOUND;
+                        }
+                        break;
+                    }
                     case '3': editUser(); break;
                     case '4': signup(false); break;
-                    case '5': deleteUser(); break;
+                    case '5': {
+                        if (deleteUser() == -1) {
+                            code = Status.USER_NOT_FOUND;
+                        }
+                        break;
+                    }
                 }
             else if (user instanceof Seller)
                 switch (a.charAt(0)) {
@@ -315,39 +342,42 @@ public class Main
 
     public static void welcome() {
         boolean invalidInput = false;
-        boolean invalidUser = false;
+
+        Status code = Status.OK;
 
         while (true) {
             Output.clear();
 
-            if (invalidUser)
-                System.out.print("Invalid username and/or password. Please try again.\n\n");
+            if (code == Status.INVALID_LOGIN)
+                Output.printError("Invalid username and/or password.");
+            else if (code == Status.SIGNUP_CANCELLED)
+                Output.printError("Account creation cancelled.");
 
             if (registeredUsers.isEmpty()){
-                System.out.print("Welcome to the Real Estate Management System.\n" +
-                                 "The database is currently empty.\n" +
-                                 "Would you like to proceed, or load a demo database?\n");
-//                System.out.print("[1] Continue\n" +
-//                                 "[2] Load demo\n" +
-//                                 "[0] Exit system\n");
-                String []menuOptions = {"Exit system", "Continue", "Load demo"};
+                Output.print("\n");
+                String[] message = {"        Welcome to the Real Estate", "            Management System!"};
+                Output.printMessageML(message);
+                String []menuOptions = {"Exit the system.", "Create an empty database.", "Load the demo database."};
+                Output.printOptions(menuOptions);
+            }
+            else {
+                Output.print("\n");
+                String[] message = {"        Welcome to the Real Estate", "            Management System!"};
+                if (code == Status.SIGNUP_SUCCESS) {
+                    message[0] = "Account creation complete!";
+                    message[1] = "Try logging in with \"" + registeredUsers.get(registeredUsers.size() - 1).getUsername() + "\".";
+                }
+                Output.printMessageML(message);
+                String []menuOptions = {"Exit the system.", "Log into existing account.", "Create a new account."};
                 Output.printOptions(menuOptions);
             }
 
-            else {
-                System.out.print("Welcome to the Real Estate Management System.\n" +
-                                 "If you have an existing account, please select [1].\n");
-                System.out.print("[1] Log into existing user\n" +
-                                 "[2] Create new user\n" +
-                                 "[0] Exit system\n");
-            }
-
             if (invalidInput)
-                System.out.print("\nInvalid Input! Please enter a number from 0 to 2: ");
+                Output.printInputMessage("Invalid input! Please enter a number from 0-3.");
             else
-                System.out.print("\nPlease enter a number: ");
+                Output.printInputMessage("Please enter a number from 0-3.");
             invalidInput = false;
-            invalidUser = false;
+            code = Status.OK;
             String input = userInput() + " ";
             char in = input.charAt(0);
 
@@ -360,36 +390,17 @@ public class Main
                     return;
                 else if (in == '1') {
                     if (login() == -1) {
-                        invalidUser = true;
+                        code = Status.INVALID_LOGIN;
                     }
                 }
                 else if (in == '2' && registeredUsers.isEmpty())
                     Demo.loadDemoDatabase();
                 else if (in == '2' && !registeredUsers.isEmpty())
                     if (signup(false) == -1) {
-                        invalidUser = true;
+                        code = Status.SIGNUP_CANCELLED;
                     }
-            }
-        }
-    }
-
-    public static void adminMenu (Admin user) {
-        while (true) {
-            System.out.print(" _ Welcome, " + user.getFullName() + ".\n");
-            System.out.print("|  You are an admin.\n");
-            System.out.print("|\n");
-            System.out.print("'-> Main Menu\n");
-            System.out.print("[1] View All Users\n" +
-                             "[2] Find User\n" +
-                             "[3] Edit User\n" +
-                             "[4] Add User\n" +
-                             "[4] Delete User\n" +
-                             "[0] Log out\n");
-            System.out.print(".-- Please enter a number:\n");
-            System.out.print("'->");
-            String a = userInput();
-            if (a.length() > 0 && a.charAt(0) == '0') {
-                break;
+                    else
+                        code = Status.SIGNUP_SUCCESS;
             }
         }
     }
@@ -401,10 +412,8 @@ public class Main
         do {
             invalid = false;
             Output.clear();
-            System.out.print("Welcome to the Real Estate Management System.\n" +
-                    "Creating a new account.\n" +
-                    "Please enter your full name.\n" +
-                    "> ");
+            Output.printMessage("Creating a new account.");
+            Output.printInputMessage("Please enter your real name (not username).");
 
             fullName = userInput();
             if (fullName.isEmpty()) {
@@ -420,16 +429,17 @@ public class Main
         } while (invalid);
 
         do {
-            invalid = false;
             Output.clear();
-            System.out.print("Welcome to the Real Estate Management System.\n" +
-                    "Welcome, " + fullName + ".\n" +
-                    "Please enter a new username.\n" +
-                    "(Must be less than 12 characters, only letters, digits, and _ or .)\n" +
-                    "> ");
+            Output.printMessage("Welcome, " + fullName + ".");
+            if (invalid) {
+                Output.printMessage("Your username must be less than 12 characters, and can only contain letters," +
+                        " digits, underscores, and dots.");
+            }
+            invalid = false;
+            Output.printInputMessage("Please enter a new username for your account.");
 
             username = userInput();
-            if (username.isEmpty())
+            if (username.isEmpty() || username.length() > 12)
                 invalid = true;
 
             for (char i : username.toCharArray()) {
@@ -440,13 +450,14 @@ public class Main
         } while (invalid);
 
         do {
-            invalid = false;
+
             Output.clear();
-            System.out.print("Welcome to the Real Estate Management System.\n" +
-                    "Welcome, " + fullName + ".\n" +
-                    "Please enter a new password\n" +
-                    "(Must be between 8-24 characters)\n" +
-                    "> ");
+            Output.printMessageML(new String[]{"Welcome, " + fullName + ".", "Username: " + username});
+            if (invalid) {
+                Output.printMessage("Your password must be at least 8 characters long, and at most 24 characters long.");
+            }
+            invalid = false;
+            Output.printInputMessage("Please enter a new password for your account.");
 
             password = userInput();
             if (password.length() < 8 || password.length() > 24)
@@ -455,35 +466,45 @@ public class Main
 
         if (!forAdmin) do {
             Output.clear();
-            System.out.print("Welcome to the Real Estate Management System.\n" +
-                    "Welcome, " + fullName + ".\n" +
-                    "Would you like to buy, or sell properties?\n" +
-                    "> ");
 
-            String answer = userInput();
-            if (answer.contains(" buy ") && answer.contains(" sell "))
-                continue;
-            else if (answer.contains(" buy ")) {
-                Buyer buyer = new Buyer(username, password);
-                buyer.setFullName(fullName);
-                for (User user : registeredUsers) {
-                    if (user.getUsername().equals(buyer.getUsername())) {
-                        return -1;
-                    }
-                }
-                registeredUsers.add(buyer);
-                return 0;
+            if (invalid) {
+                Output.printError("Please enter a valid option.");
             }
-            else if (answer.contains(" sell ")) {
-                Seller seller = new Seller(username, password);
-                seller.setFullName(fullName);
-                for (User user : registeredUsers) {
-                    if (user.getUsername().equals(seller.getUsername())) {
-                        return -1;
+            Output.printMessageML(new String[]{"Welcome, " + fullName + ".", "Username: " + username});
+
+            Output.printOptions(new String[]{"Cancel account creation.", "I will buy properties.", "I will sell properties."});
+
+            String input = userInput();
+            char in = input.charAt(0);
+
+            if (in < '0' || in > '2') {
+                invalid = true;
+            }
+            else {
+                if (in == '0')
+                    return -1;
+                else if (in == '1') {
+                    Buyer buyer = new Buyer(username, password);
+                    buyer.setFullName(fullName);
+                    for (User user : registeredUsers) {
+                        if (user.getUsername().equals(buyer.getUsername())) {
+                            return -1;
+                        }
                     }
+                    registeredUsers.add(buyer);
+                    return 0;
                 }
-                registeredUsers.add(seller);
-                return 0;
+                else if (in == '2') {
+                    Seller seller = new Seller(username, password);
+                    seller.setFullName(fullName);
+                    for (User user : registeredUsers) {
+                        if (user.getUsername().equals(seller.getUsername())) {
+                            return -1;
+                        }
+                    }
+                    registeredUsers.add(seller);
+                    return 0;
+                }
             }
         } while (true);
         else {
@@ -503,19 +524,16 @@ public class Main
             String username = "", password = "";
             while (true) {
                 Output.clear();
-                System.out.print("Welcome to the Real Estate Management System.\n" +
-                        "Logging into existing user.\n" +
-                        "Please enter your username:");
-
+                Output.printMessage("Logging into existing account.");
+                Output.printInputMessage("Please enter your username.");
                 username = userInput();
                 if (!username.isEmpty())
                     break;
             }
             while (true) {
                 Output.clear();
-                System.out.print("Welcome to the Real Estate Management System.\n" +
-                        "Logging into user: " + username + "\n" +
-                        "Please enter your password:");
+                Output.printMessage("Logging into: " + username);
+                Output.printInputMessage("Please enter your password.");
 
                 password = userInput();
                 if (!password.isEmpty())

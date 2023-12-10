@@ -136,20 +136,20 @@ public class Output {
             case 5:
                 col5 = highlightColumn(col5); max5 += 2; break;
         }
-
+        print(" ");
         // Prints the top border line, with the total width adjusting for the largest character count in each row
         System.out.print(" " + underscores(14 + max1 + max2 + max3 + max4 + max5) + "\n");
-
+        print(" ");
         // Prints the title for every column, and adds spaces if the data is too small, then adds the separator "|" character
         printColumns(columns, "| ", fillSpaces("", max1), fillSpaces("", max2), fillSpaces("", max3), fillSpaces("", max4),
                 fillSpaces("", max5));
-
+        print(" ");
         printColumns(columns, "| ", fillSpaces(col1, max1), fillSpaces(col2, max2), fillSpaces(col3, max3),
                 fillSpaces(col4, max4), fillSpaces(col5, max5));
-
+        print(" ");
         printColumns(columns, "|_", underscores(max1 + 1), underscores(max2 + 1), underscores(max3 + 1), underscores(max4 + 1),
                 underscores(max5 + 1));
-
+        print(" ");
         // Prints the line below the column titles, with the total width adjusting for the largest character count in each row, separated by "|"
         printColumns(columns, "| ", fillSpaces("", max1), fillSpaces("", max2), fillSpaces("", max3), fillSpaces("", max4),
                 fillSpaces("", max5));
@@ -177,12 +177,12 @@ public class Output {
                 item5 = "SAR " + totalCost.toPlainString();
             }
 
-
+            print(" ");
             // Prints the data for every column, and adds spaces if the data is too small, then adds the separator "|" character
             printColumns(columns, "| ", fillSpaces(item1, max1), fillSpaces(item2, max2), fillSpaces(item3, max3),
                          fillSpaces(item4, max4), fillSpaces(item5, max5));
         }
-
+        print(" ");
         printColumns(columns, "|_", underscores(max1 + 1), underscores(max2 + 1), underscores(max3 + 1), underscores(max4 + 1),
                 underscores(max5 + 1));
     }
@@ -199,8 +199,10 @@ public class Output {
             if (counter == 0) { counter++; continue; }
             print(" |      [" + (counter++) + "] " + fillSpaces(option, 35) + "   |\n");
         }
-        print(" |   -------------------------------------------   |\n");
-        print(" |      [0] " + fillSpaces(options[0], 35) + "   |\n");
+        if (!options[0].isEmpty()) {
+            print(" |   -------------------------------------------   |\n");
+            print(" |      [0] " + fillSpaces(options[0], 35) + "   |\n");
+        }
         print(" |_________________________________________________|\n");
     }
 
@@ -237,10 +239,34 @@ public class Output {
     public static void printMessageML (String[] lines) {
         print("  _________________________________________________\n");
         print(" |                                                 |\n");
-        int counter = 0;
         for (String line : lines) {
             print(" |   " + fillSpaces(line, 42) + "   |\n");
         }
         print(" |_________________________________________________|\n");
+    }
+
+    public static void printMessageML (String[] lines, int override, int oline) {
+        print("  _________________________________________________\n");
+        print(" |                                                 |\n");
+        int counter = 0;
+        for (String line : lines) {
+                counter++;
+                if (counter == oline)
+                    print(" |   " + fillSpaces(line, override) + "   |\n");
+                else
+                    print(" |   " + fillSpaces(line, 42) + "   |\n");
+        }
+        print(" |_________________________________________________|\n");
+    }
+
+    public static void printError (String message) {
+        print("    .\n   / \\  .-----------------------------------------.\n");
+        print("  / | \\(  " + fillSpaces(message, 39) + " )\n");
+        print(" /__'__\\'-----------------------------------------'\n");
+    }
+
+    public static void printInputMessage (String message) {
+        print("  _____________ _ ____ _____  ___  _ _ ___  _   _\n |\n");
+        print(" |   " + message + "\n" + " |\n '-----> ");
     }
 }
