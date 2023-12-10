@@ -73,7 +73,7 @@ public class Output {
 
         String col1 = "", col2 = "", col3 = "", col4 = "", col5 = "";
         if (array.get(0) instanceof User) {
-            col1 = "ID";
+            col1 = "#";
             col2 = "Full Name";
             col3 = "Username";
             col4 = "Password";
